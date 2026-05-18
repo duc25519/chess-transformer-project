@@ -1,0 +1,104 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+\documentclass[11pt, a4paper]{article}
+
+\def\papertitle{Testing Generation of Chess Games Using Transformer Models}
+\def\paperauthor{Hoàng Minh Đức}
+\def\paperauthoremail{my email}
+
+\title{\papertitle}
+\author{\paperauthor \thanks{\paperauthoremail}}
+\date{\today}
+
+\usepackage{fontspec}
+
+\setmonofont{Inconsolata}
+
+\usepackage{graphicx}
+
+\usepackage{xurl}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    pdftitle={\papertitle},
+    breaklinks=true,
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\usepackage[backend=biber, natbib=true, style=alphabetic, sorting=none]{biblatex}
+\addbibresource{main.bib}
+
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{parskip}
+
+% tabular nonsense
+\usepackage{booktabs}
+\usepackage{array}
+
+\usepackage{amsmath}
+
+% in case I need to draw stuff
+% \usepackage{xskak}
+% \usepackage{tikz}
+
+\usepackage[capitalize, noabbrev]{cleveref}
+% \usepackage{amssymb}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    % TODO: add more to this abstract.
+    In this paper, we analyze whether decoder-only Transformer models can generate complete (terminated) and valid (no illegal moves or positions) chess games by watching movement of pieces.
+\end{abstract}
+
+\section{Introduction}
+
+Computer chess has a very long history, dating back to the earliest days of computer science \citep{silver-2017}. Programs, called \textit{chess engines}, such as Stockfish \citep{thestockfishdevelopers-2026} have achieved superhuman performance, utilizing techniques such as
+
+The Transformer architecture \citep{vaswani-2017} is a very influential architecture, used for the majority of language models. It has seen use in natural language processing, vision, and even analysis of chess itself \citep{ruoss-2024,monroe-2024}. In this paper, we build and analyze Transformer-based generative (decoder-only) models at the ability to synthetically generate chess games.
+
+The
+
+\section{Related Works}
+
+\section{Methodology}
+
+\subsection{Definitions}
+
+A \textit{chess game} is a finite sequence of moves from the standard initial position of chess, in which every move is legal given the current board state. We distinguish two categories:
+
+\begin{itemize}
+    \item A \textit{complete chess game} is a chess game that terminates in a decisive condition under the FIDE Laws of Chess \citep{fide-2023}: checkmate, stalemate, insufficient material, the fifty-move rule, or threefold repetition.
+    \item An \textit{incomplete chess game} is a chess game that does not meet the above conditions. This includes games ended by resignation or mutual agreement, whose terminal conditions cannot be inferred from the move sequence alone.
+\end{itemize}
+
+Moves are represented using Universal Chess Interface (\textit{UCI}) notation, in which each move is defined by picking up a piece in a \textit{starting square}, and placing it in the \textit{destination square}. Even though Standard Algebraic Notation (\textit{SAN}) is more frequently used, UCI notation has a much lower overall token vocabulary, since each token does not need to carry extra information that SAN explicitly represents, e.g. the piece being moved.
+
+\subsection{Data}
+
+For this particular task, we use the Lichess open databases, which consists entirely of games by human and engine players of various ELO levels.
+
+\subsection{Model}
+
+\subsubsection{Model Architecture}
+
+The model is based on the Transformer architecture, itself based on the attention mechanism \citep{vaswani-2017}. In particular, we will use OpenAI's GPT-2 model \citep{radford-2019}, and it's implementation in HuggingFace's Transformer Library.
+
+\section{Results}
+
+\section{Conclusion}
+
+\section{Acknowledgments}
+
+I would like to acknowledge Austin Davis for preprocessing and creating the UCI-notation version of the Lichess monthly databases \citep{davis-2024}.
+
+\appendix
+
+% \pagebreak
+\printbibliography
+\end{document}
