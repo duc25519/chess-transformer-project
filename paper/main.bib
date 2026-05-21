@@ -1,10 +1,32 @@
+@online{cognetta-2025,
+  title = {Masked {{Softmax Layers}} in {{PyTorch}}},
+  author = {Cognetta, Marco},
+  date = {2025-10-25},
+  url = {https://mcognetta.github.io/posts/masked_softmax/},
+  abstract = {Correctly computing masked softmax layers.},
+  langid = {english}
+}
+
 @dataset{davis-2024,
   title = {Lichess.Org Open Database in {{UCI}} Format},
   author = {Davis, Austin},
   date = {2024},
   publisher = {austindavis/lichess-uci},
-  location = {https://huggingface.co/datasets/austindavis/lichess-uci},
+  location = {HuggingFace},
   url = {https://huggingface.co/datasets/austindavis/lichess-uci},
+  langid = {english}
+}
+
+@article{feng-2023a,
+  title = {{{ChessGPT}}: {{Bridging Policy Learning}} and {{Language Modeling}}},
+  shorttitle = {{{ChessGPT}}},
+  author = {Feng, Xidong and Luo, Yicheng and Wang, Ziyan and Tang, Hongrui and Yang, Mengyue and Shao, Kun and Mguni, David and Du, Yali and Wang, Jun},
+  date = {2023-12-15},
+  journaltitle = {Advances in Neural Information Processing Systems},
+  volume = {36},
+  pages = {7216--7262},
+  url = {https://proceedings.neurips.cc/paper_files/paper/2023/hash/16b14e3f288f076e0ca73bdad6405f77-Abstract-Datasets_and_Benchmarks.html},
+  abstract = {When solving decision-making tasks, humans typically depend on information from two key sources: (1) Historical policy data, which provides interaction replay from the environment, and (2) Analytical insights in natural language form, exposing the invaluable thought process or strategic considerations. Despite this, the majority of preceding research focuses on only one source: they either use historical replay exclusively to directly learn policy or value functions, or engaged in language model training utilizing mere language corpus. In this paper, we argue that a powerful autonomous agent should cover both sources. Thus, we propose ChessGPT, a GPT model bridging policy learning and language modeling by integrating data from these two sources in Chess games. Specifically, we build a large-scale game and language dataset related to chess. Leveraging the dataset, we showcase two model examples ChessCLIP and ChessGPT, integrating policy learning and language modeling. Finally, we propose a full evaluation framework for evaluating language model's chess ability. Experimental results validate our model and dataset's effectiveness. We open source our code, model, and dataset at https://github.com/waterhorse1/ChessGPT.},
   langid = {english}
 }
 
@@ -28,6 +50,17 @@
   langid = {english}
 }
 
+@inproceedings{loshchilov-2017,
+  title = {{{SGDR}}: {{Stochastic Gradient Descent}} with {{Warm Restarts}}},
+  shorttitle = {{{SGDR}}},
+  author = {Loshchilov, Ilya and Hutter, Frank},
+  date = {2017-02-06},
+  url = {https://openreview.net/forum?id=Skq89Scxx},
+  abstract = {Restart techniques are common in gradient-free optimization to deal with multimodal functions. Partial warm restarts are also gaining popularity in gradient-based optimization to improve the rate of convergence in accelerated gradient schemes to deal with ill-conditioned functions. In this paper, we propose a simple warm restart technique for stochastic gradient descent to improve its anytime performance when training deep neural networks. We empirically study its performance on the CIFAR-10 and CIFAR-100 datasets, where we demonstrate new state-of-the-art results at 3.14\textbackslash\% and 16.21\textbackslash\%, respectively. We also demonstrate its advantages on a dataset of EEG recordings and on a downsampled version of the ImageNet dataset. Our source code is available at \textbackslash\textbackslash{} \textbackslash url\{https://github.com/loshchil/SGDR\}},
+  eventtitle = {International {{Conference}} on {{Learning Representations}}},
+  langid = {english}
+}
+
 @online{monroe-2024,
   title = {Mastering {{Chess}} with a {{Transformer Model}}},
   author = {Monroe, Daniel and Chalmers, Philip A.},
@@ -40,6 +73,20 @@
   abstract = {Transformer models have demonstrated impressive capabilities when trained at scale, excelling at difficult cognitive tasks requiring complex reasoning and rational decision-making. In this paper, we explore the application of transformers to chess, focusing on the critical role of the position representation within the attention mechanism. We show that transformers endowed with a sufficiently expressive position representation can match existing chess-playing models at a fraction of the computational cost. Our architecture, which we call the Chessformer, significantly outperforms AlphaZero in both playing strength and puzzle solving ability with 8x less computation and matches prior grandmaster-level transformer-based agents in those metrics with 30x less computation. Our models also display an understanding of chess dissimilar and orthogonal to that of top traditional engines, detecting high-level positional features like trapped pieces and fortresses that those engines struggle with. This work demonstrates that domain-specific enhancements can in large part replace the need for model scale, while also highlighting that deep learning can make strides even in areas dominated by search-based methods.},
   pubstate = {prepublished},
   keywords = {Computer Science - Machine Learning}
+}
+
+@online{naveed-2024,
+  title = {A {{Comprehensive Overview}} of {{Large Language Models}}},
+  author = {Naveed, Humza and Khan, Asad Ullah and Qiu, Shi and Saqib, Muhammad and Anwar, Saeed and Usman, Muhammad and Akhtar, Naveed and Barnes, Nick and Mian, Ajmal},
+  date = {2024-10-17},
+  eprint = {2307.06435},
+  eprinttype = {arXiv},
+  eprintclass = {cs.CL},
+  doi = {10.48550/arXiv.2307.06435},
+  url = {http://arxiv.org/abs/2307.06435},
+  abstract = {Large Language Models (LLMs) have recently demonstrated remarkable capabilities in natural language processing tasks and beyond. This success of LLMs has led to a large influx of research contributions in this direction. These works encompass diverse topics such as architectural innovations, better training strategies, context length improvements, fine-tuning, multi-modal LLMs, robotics, datasets, benchmarking, efficiency, and more. With the rapid development of techniques and regular breakthroughs in LLM research, it has become considerably challenging to perceive the bigger picture of the advances in this direction. Considering the rapidly emerging plethora of literature on LLMs, it is imperative that the research community is able to benefit from a concise yet comprehensive overview of the recent developments in this field. This article provides an overview of the existing literature on a broad range of LLM-related concepts. Our self-contained comprehensive overview of LLMs discusses relevant background concepts along with covering the advanced topics at the frontier of research in LLMs. This review article is intended to not only provide a systematic survey but also a quick comprehensive reference for the researchers and practitioners to draw insights from extensive informative summaries of the existing works to advance the LLM research.},
+  pubstate = {prepublished},
+  keywords = {Computer Science - Computation and Language}
 }
 
 @online{openai-2024,
@@ -88,6 +135,20 @@
   keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Statistics - Machine Learning}
 }
 
+@article{shannon-1950,
+  title = {{{XXII}}. {{Programming}} a Computer for Playing Chess},
+  author = {Shannon, Claude E.},
+  date = {1950-03-01},
+  journaltitle = {The London, Edinburgh, and Dublin Philosophical Magazine and Journal of Science},
+  volume = {41},
+  number = {314},
+  pages = {256--275},
+  publisher = {Taylor \& Francis},
+  issn = {1941-5982},
+  doi = {10.1080/14786445008521796},
+  url = {https://doi.org/10.1080/14786445008521796}
+}
+
 @online{silver-2017,
   title = {Mastering {{Chess}} and {{Shogi}} by {{Self-Play}} with a {{General Reinforcement Learning Algorithm}}},
   author = {Silver, David and Hubert, Thomas and Schrittwieser, Julian and Antonoglou, Ioannis and Lai, Matthew and Guez, Arthur and Lanctot, Marc and Sifre, Laurent and Kumaran, Dharshan and Graepel, Thore and Lillicrap, Timothy and Simonyan, Karen and Hassabis, Demis},
@@ -100,6 +161,19 @@
   abstract = {The game of chess is the most widely-studied domain in the history of artificial intelligence. The strongest programs are based on a combination of sophisticated search techniques, domain-specific adaptations, and handcrafted evaluation functions that have been refined by human experts over several decades. In contrast, the AlphaGo Zero program recently achieved superhuman performance in the game of Go, by tabula rasa reinforcement learning from games of self-play. In this paper, we generalise this approach into a single AlphaZero algorithm that can achieve, tabula rasa, superhuman performance in many challenging domains. Starting from random play, and given no domain knowledge except the game rules, AlphaZero achieved within 24 hours a superhuman level of play in the games of chess and shogi (Japanese chess) as well as Go, and convincingly defeated a world-champion program in each case.},
   pubstate = {prepublished},
   keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning}
+}
+
+@inproceedings{tang-2024,
+  title = {Maia-2: {{A Unified Model}} for {{Human-AI Alignment}} in {{Chess}}},
+  shorttitle = {Maia-2},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Tang, Zhenwei and Jiao, Difan and McIlroy-Young, Reid and Kleinberg, Jon and Sen, Siddhartha and Anderson, Ashton},
+  date = {2024-12-16},
+  volume = {37},
+  pages = {20919--20944},
+  doi = {10.52202/079017-0659},
+  url = {https://proceedings.neurips.cc/paper_files/paper/2024/hash/250190819ff1dda47cd23cecc0c5a69b-Abstract-Conference.html},
+  langid = {english}
 }
 
 @software{thelczeroauthors-2026,
@@ -118,6 +192,16 @@
   origdate = {2014-06-18T19:59:53Z},
   url = {https://github.com/official-stockfish/Stockfish},
   abstract = {A free and strong UCI chess engine}
+}
+
+@online{tobs40-2024,
+  title = {Why a Reachable Position Can Have at Most 218 Playable Moves},
+  author = {{Tobs40}},
+  date = {2024-05-07},
+  url = {https://lichess.org/@/Tobs40/blog/why-a-reachable-position-can-have-at-most-218-playable-moves/a5xdxeqs},
+  abstract = {I hope that the title is unambiguous enough now and I wholeheartedly apologize to all the people who thought that it was about 218 move long games! .\_\_\_. {$<$}3},
+  langid = {american},
+  organization = {lichess.org}
 }
 
 @article{toshniwal-2022,

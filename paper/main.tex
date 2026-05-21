@@ -1,9 +1,9 @@
 \RequirePackage[l2tabu, orthodox]{nag}
 \documentclass[11pt, a4paper]{article}
 
-\def\papertitle{Testing Generation of Chess Games Using Transformer Models}
-\def\paperauthor{Hoàng Minh Đức}
-\def\paperauthoremail{my email}
+\newcommand\papertitle{Testing Generation of Chess Games Using Transformer Models}
+\newcommand\paperauthor{Hoàng Minh Đức}
+\newcommand\paperauthoremail{hoangminhduc0308@gmail.com}
 
 \title{\papertitle}
 \author{\paperauthor \thanks{\paperauthoremail}}
@@ -21,12 +21,13 @@
     colorlinks=true,
     linkcolor=blue,
     pdftitle={\papertitle},
+    pdfauthor={\paperauthor},
     breaklinks=true,
     urlcolor=blue,
     citecolor=blue,
 }
 
-\usepackage[backend=biber, natbib=true, style=alphabetic, sorting=none]{biblatex}
+\usepackage[backend=biber, natbib=true, style=numeric, sorting=none]{biblatex}
 \addbibresource{main.bib}
 
 \usepackage{setspace}
@@ -39,12 +40,15 @@
 \usepackage{array}
 
 \usepackage{amsmath}
+\usepackage{amssymb}
 
 % in case I need to draw stuff
-% \usepackage{xskak}
+\usepackage{xskak}
 % \usepackage{tikz}
 
 \usepackage[capitalize, noabbrev]{cleveref}
+
+\input{../resources/params.tex}
 % \usepackage{amssymb}
 
 \begin{document}
@@ -55,33 +59,91 @@
     % TODO: add more to this abstract.
     In this paper, we analyze whether decoder-only Transformer models can generate complete (terminated) and valid (no illegal moves or positions) chess games by watching movement of pieces.
 \end{abstract}
+==> Starting prepare()...
 
 \section{Introduction}
 
-Computer chess has a very long history, dating back to the earliest days of computer science \citep{silver-2017}. Programs, called \textit{chess engines}, such as Stockfish \citep{thestockfishdevelopers-2026} have achieved superhuman performance, utilizing techniques such as
+Computer chess has a very long history, dating back to the earliest days of computer science \citep{silver-2017}. It is also ideal for developing artificial intelligence \citep{tang-2024, toshniwal-2022}. Programs, called \textit{chess engines} such as Stockfish have achieved superhuman performance, utilizing various techniques such as Monte-Carlo Tree Search, and customized neural networks \citep{thestockfishdevelopers-2026}.
 
-The Transformer architecture \citep{vaswani-2017} is a very influential architecture, used for the majority of language models. It has seen use in natural language processing, vision, and even analysis of chess itself \citep{ruoss-2024,monroe-2024}. In this paper, we build and analyze Transformer-based generative (decoder-only) models at the ability to synthetically generate chess games.
+The Transformer architecture \citep{vaswani-2017} is a very influential architecture, used for the majority of language models. It has seen use in natural language processing, vision, and even analysis of chess itself \citep{ruoss-2024,monroe-2024}. As general large language models like GPT-2
 
-The
+In this paper, we build and analyze Transformer-based generative (decoder-only) models at the ability to synthetically generate chess games.
 
+The source code and \LaTeX{} source of this paper are open-source.\footnote{Both the code and \LaTeX{} source for this paper are hosted at \url{https://github.com/duc25519/chess-transformer-project/}
+}
 \section{Related Works}
+
+A concern with Large Language Models (\textit{LLMs}) is the representation of their "world state", due to the complexity of natural language and black-box nature of those models \citep{toshniwal-2022}.
 
 \section{Methodology}
 
 \subsection{Definitions}
 
-A \textit{chess game} is a finite sequence of moves from the standard initial position of chess, in which every move is legal given the current board state. We distinguish two categories:
+\subsubsection{Chess Game and Categories}
+
+A \textit{chess game} is a finite sequence of \textit{half-moves} \(h_1, h_2, \dots, h_n\) (also called \textit{plies}) from the standard initial position of chess. Each half-move is represented using Universal Chess Interface (\textit{UCI}) notation, in which each move is defined by picking up a piece in a \textit{starting square}, and placing it in the \textit{destination square}. \footnote{Even though Standard Algebraic Notation (\textit{SAN}) is more frequently used, UCI notation only requires a significantly smaller token vocabulary, since each half-move does not need to carry extra information that SAN explicitly represents, e.g. the piece being moved, or any extra effects caused by the move, such as checks.}
+
+In this paper, we define a \textit{valid} chess game to be a chess game with no invalid moves, and equivalently, an \textit{invalid} chess game to be a chess game with at least one invalid move.
+
+For valid chess games, we also define the two following smaller categories:
 
 \begin{itemize}
-    \item A \textit{complete chess game} is a chess game that terminates in a decisive condition under the FIDE Laws of Chess \citep{fide-2023}: checkmate, stalemate, insufficient material, the fifty-move rule, or threefold repetition.
-    \item An \textit{incomplete chess game} is a chess game that does not meet the above conditions. This includes games ended by resignation or mutual agreement, whose terminal conditions cannot be inferred from the move sequence alone.
+    \item A \textit{complete} chess game is a chess game that terminates in a decisive condition under the FIDE Laws of Chess \citep{fide-2023}: checkmate, stalemate, insufficient material, the fifty-move rule, or threefold repetition.
+    \item An \textit{incomplete} chess game is a chess game that does not meet the above conditions. This includes games ended by resignation or mutual agreement, whose terminal conditions cannot be inferred from the move sequence alone.
 \end{itemize}
 
-Moves are represented using Universal Chess Interface (\textit{UCI}) notation, in which each move is defined by picking up a piece in a \textit{starting square}, and placing it in the \textit{destination square}. Even though Standard Algebraic Notation (\textit{SAN}) is more frequently used, UCI notation has a much lower overall token vocabulary, since each token does not need to carry extra information that SAN explicitly represents, e.g. the piece being moved.
+An example visualization of every half-move of a game in UCI notation is depicted in \cref{fig:uci-demo}.
+
+\begin{figure}
+    \centering
+    \newchessgame
+    \mainline{ \xskakcomment{Example Game: } 1. e4 e5 2. Bc4 Bc5 3. Nc3 Qh4 4. Nf3 Qxf2#}
+    \includegraphics[page=1, width=1\textwidth]{../resources/scholars_mate.pdf}
+    \caption{An example game based on the Scholar's Mate in SAN, and a demonstration of its every half-move in UCI notation (from left to right, and top to bottom). Every half-move is depicted with a blue arrow, and two red squares. The empty square at the tail of the arrow is the source, and the square with the piece accompanying it at the head of the arrow is the destination. Note that SAN (Standard Algebraic Notation) uses piece letters rather than piece icons.}
+    \label{fig:uci-demo}
+\end{figure}
+
+\subsubsection{Legal Mask} \label{sec:legal-mask}
+
+Language models are \textit{stochastic}: they sample each token from a learned probability distribution, and may produce tokens that correspond to illegal moves. Furthermore, despite the large amount of moves in the vocabulary, the amount of legal moves in a position on average is only approximately \(30\) \citep{shannon-1950}. To address this, we introduce a \textit{legal mask}, which restricts sampling at each step to the set of moves that are legal given the current board state.
+
+% god I'm so bad at making things sound intuitive
+% fuck it
+
+Formally, let \(\mathcal{V}\) denote the move vocabulary and let \(\mathcal{L}(h_1, \dots, h_n) \subseteq \mathcal{V}\) denote the set of  legal moves given the board state induced by the sequence \(h_1, \dots, h_n\). The model produces logits  \(\mathbf{z} \in \mathbb{R}^{|\mathcal{V}|}\); the legal mask sets the logits of illegal moves to \(-\infty\) before sampling:
+
+\begin{equation}
+    \tilde{z}_v =
+    \begin{cases}
+        z_v & \text{if } v \in \mathcal{L}(h_1, \dots, h_n) \\
+        -\infty & \text{otherwise}
+    \end{cases}
+\end{equation}
+
+The next move is then sampled from the renormalized distribution:
+
+\begin{equation}
+    P(h_{n+1} = v \mid h_1, \dots, h_n)
+    = \text{softmax}(\tilde{\mathbf{z}})_v
+    = \frac{\exp(z_v)}{\displaystyle\sum_{u \,\in\,
+    \mathcal{L}(h_1, \dots, h_n)} \exp(z_u)}
+\end{equation}
+
+Since \(\exp(-\infty) = 0\), illegal moves contribute nothing to the denominator, and the distribution renormalizes automatically over legal moves only.
+
+The legal mask will only guarantee generation of a next valid half-move \(h_{n + 1}\) given existing half-moves \(h_1, h_2, \dots, h_n\). It does not guarantee game completion, lower centipawn-loss, etc.
+
+\subsection{Task}
+
+% TODO: this is just a rough draft, clarify it, I suppose.
+
+We evaluate the model on the task of \textit{synthetic game generation}. More specifically, we perform \textit{causal language modeling}, by attempting to generate a full game starting from a sequence of (potentially empty) opening half-moves.
+
+The games will be generated with and without the use of the legal mask. For each case, We generate \(1000\) games using models with and without the legal mask, and in both cases, we evaluate the game length (in number of moves), completeness (as defined above). For the case of generation without a legal mask, game validity is also evaluated.
 
 \subsection{Data}
 
-For this particular task, we use the Lichess open databases, which consists entirely of games by human and engine players of various ELO levels.
+For this particular task, we use the Lichess open databases, which consists entirely of games by human and engine players of various ELO ratings. The database of games is split into individual months of various years, and has been processed into the UCI format by \citet{davis-2024}. \footnote{The original versions of the files are in SAN notation, and can be found at \url{https://database.lichess.org}}
 
 \subsection{Model}
 
@@ -89,7 +151,18 @@ For this particular task, we use the Lichess open databases, which consists enti
 
 The model is based on the Transformer architecture, itself based on the attention mechanism \citep{vaswani-2017}. In particular, we will use OpenAI's GPT-2 model \citep{radford-2019}, and it's implementation in HuggingFace's Transformer Library.
 
+We train the model on a setup of two T4 GPUs, available on Kaggle, with a learning rate of \(\trainingLearningRate\) for \(\trainingNumEpochs\) epochs \footnote{More training hyperparamters is available in the source code.}.
 \section{Results}
+
+\subsection{Evaluation of generated games}
+
+\section{Discussion}
+
+\subsection{Limitations}
+
+One central limitation of this work lies in the dataset. The wide variety of player ELO ratings mean that the model are likely to perform worse (in terms of accuracy of the generated games, if they are valid) compared to if it is only trained on higher-rated games.
+
+\subsection{Future Work}
 
 \section{Conclusion}
 
