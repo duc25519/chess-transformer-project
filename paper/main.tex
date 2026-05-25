@@ -59,7 +59,6 @@
     % TODO: add more to this abstract.
     In this paper, we analyze whether decoder-only Transformer models can generate complete (terminated) and valid (no illegal moves or positions) chess games by watching movement of pieces.
 \end{abstract}
-==> Starting prepare()...
 
 \section{Introduction}
 
@@ -160,7 +159,7 @@ We train the model on a setup of two T4 GPUs, available on Kaggle, with a learni
 
 \subsection{Limitations}
 
-One central limitation of this work lies in the dataset. The wide variety of player ELO ratings mean that the model are likely to perform worse (in terms of accuracy of the generated games, if they are valid) compared to if it is only trained on higher-rated games.
+One central limitation of this work lies in the dataset. The wide variety of player ELO ratings mean that the model are likely to perform worse (in terms of accuracy of the generated games, if they are valid) compared to if it is only trained on higher-rated games. Similarly, results by \citep{toshniwal-2022} show that training on smaller game datasets causes the models' predictive capability to suffer.
 
 \subsection{Future Work}
 
