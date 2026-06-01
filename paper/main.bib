@@ -39,6 +39,15 @@
   langid = {english}
 }
 
+@article{glickman-2022,
+  title = {Example of the {{Glicko-2}} System},
+  author = {Glickman, Mark E.},
+  date = {2022-03-22},
+  url = {https://www.glicko.net/glicko/glicko2.pdf},
+  langid = {english},
+  file = {C:\Users\duc\Zotero\storage\BY86R4IX\Glickman - 2022 - Example of the Glicko-2 system.pdf}
+}
+
 @inproceedings{li-2022,
   title = {Emergent {{World Representations}}: {{Exploring}} a {{Sequence Model Trained}} on a {{Synthetic Task}}},
   shorttitle = {Emergent {{World Representations}}},
@@ -73,6 +82,19 @@
   abstract = {Transformer models have demonstrated impressive capabilities when trained at scale, excelling at difficult cognitive tasks requiring complex reasoning and rational decision-making. In this paper, we explore the application of transformers to chess, focusing on the critical role of the position representation within the attention mechanism. We show that transformers endowed with a sufficiently expressive position representation can match existing chess-playing models at a fraction of the computational cost. Our architecture, which we call the Chessformer, significantly outperforms AlphaZero in both playing strength and puzzle solving ability with 8x less computation and matches prior grandmaster-level transformer-based agents in those metrics with 30x less computation. Our models also display an understanding of chess dissimilar and orthogonal to that of top traditional engines, detecting high-level positional features like trapped pieces and fortresses that those engines struggle with. This work demonstrates that domain-specific enhancements can in large part replace the need for model scale, while also highlighting that deep learning can make strides even in areas dominated by search-based methods.},
   pubstate = {prepublished},
   keywords = {Computer Science - Machine Learning}
+}
+
+@inproceedings{monroe-2025,
+  title = {Chessformer: {{A Unified Architecture}} for {{Chess Modeling}}},
+  shorttitle = {Chessformer},
+  author = {Monroe, Daniel and Eilender, George and Chalmers, Philip and Tang, Zhenwei and Anderson, Ashton},
+  date = {2025-10-08},
+  url = {https://openreview.net/forum?id=2ltBRzEHyd},
+  urldate = {2026-05-31},
+  abstract = {Chess has long served as a canonical testbed for artificial intelligence, but modeling approaches for its central tasks have diverged. Maximizing playing strength, predicting human play, and enabling interpretability are typically solved with disparate architectures, and these designs are often misaligned with the geometry of the domain. This raises the natural question of whether these objectives require separate modeling paradigms, or if there exists a single architecture that supports them simultaneously. We introduce Chessformer, a unified architecture that advances the state of the art on all three central goals in chess modeling. Chessformer is an encoder- only transformer that represents board squares as tokens, augments self-attention with a novel dynamic positional encoding called Geometric Attention Bias (GAB) that adapts to domain-specific geometry, and predicts actions with an attention-based source-destination policy head. We evaluate Chessformer on each front. First, we develop MAIA-3, a family of models for human move prediction that reaches 57.1\% move-matching accuracy, significantly surpassing the previous state of the art with fewer than a quarter of the parameters. Second, we integrate Chessformer into Leela Chess Zero, a leading open-source engine, adding over 100 Elo of playing strength and resulting in tournament victories over Stockfish in major computer chess competitions. Third, we show that Chessformer’s square-token design makes attention patterns and activations directly attributable to board squares, enabling granular interpretability analyses that prior architectures do not naturally support. More broadly, our results demonstrate that aligning a model’s tokenization, positional encoding, and output design with the underlying structure of a domain can yield simultaneous gains in performance, human compatibility, and interpretability.},
+  eventtitle = {The {{Fourteenth International Conference}} on {{Learning Representations}}},
+  langid = {english},
+  file = {C:\Users\duc\Zotero\storage\YD5AC7HX\Monroe et al. - 2025 - Chessformer A Unified Architecture for Chess Modeling.pdf}
 }
 
 @online{naveed-2024,
@@ -176,15 +198,6 @@
   langid = {english}
 }
 
-@software{thelczeroauthors-2026,
-  title = {{{LeelaChessZero}}},
-  author = {{The LCZero Authors}},
-  date = {2026-05-17T22:04:56Z},
-  origdate = {2018-05-30T19:41:42Z},
-  url = {https://github.com/LeelaChessZero/lc0},
-  abstract = {Open source neural network chess engine with GPU acceleration and broad hardware support.}
-}
-
 @software{thestockfishdevelopers-2026,
   title = {Stockfish},
   author = {{The Stockfish Developers}},
@@ -239,4 +252,16 @@
   abstract = {Li et al. (2023) used the Othello board game as a test case for the ability of GPT2 to induce world models, and were followed up by Nanda et al. (2023b). We briefly discuss the original experiments, expanding them to include more language models with more comprehensive probing. Specifically, we analyze sequences of Othello board states and train the model to predict the next move based on previous moves. We evaluate seven language models (GPT-2, T5, Bart, Flan-T5, Mistral, LLaMA-2, and Qwen2.5) on the Othello task and conclude that these models not only learn to play Othello, but also induce the Othello board layout. We find that all models achieve up to 99\% accuracy in unsupervised grounding and exhibit high similarity in the board features they learned. This provides considerably stronger evidence for the Othello World Model Hypothesis than previous works.},
   langid = {english},
   pubstate = {prepublished}
+}
+
+@inproceedings{zhang-2025,
+  title = {Human-{{Aligned Chess With}} a {{Bit}} of {{Search}}},
+  author = {Zhang, Yiming},
+  date = {2025-04-18},
+  url = {https://openreview.net/forum?id=vGGPoxukMC},
+  urldate = {2026-05-31},
+  abstract = {Chess has long been a testbed for AI's quest to match human intelligence, and in recent years, chess AI systems have surpassed the strongest humans at the game. However, these systems are not human-aligned; they are unable to match the skill levels of all human partners or model human-like behaviors beyond piece movement. In this paper, we introduce Allie, a chess-playing AI designed to bridge the gap between artificial and human intelligence in this classic game. Allie is trained on log sequences of real chess games to model the behaviors of human chess players across the skill spectrum, including non-move behaviors such as pondering times and resignations In offline evaluations, we find that Allie exhibits humanlike behavior: it outperforms the existing state-of-the-art in human chess move prediction and ``ponders'' at critical positions. The model learns to reliably assign reward at each game state, which can be used at inference as a reward function in a novel time-adaptive Monte-Carlo tree search (MCTS) procedure, where the amount of search depends on how long humans would think in the same positions. Adaptive search enables remarkable skill calibration; in a large-scale online evaluation against players with ratings from 1000 to 2600 Elo, our adaptive search method leads to a skill gap of only 49 Elo on average, substantially outperforming search-free and standard MCTS baselines. Against grandmaster-level (2500 Elo) opponents, Allie with adaptive search exhibits the strength of a fellow grandmaster, all while learning exclusively from humans.},
+  eventtitle = {{{LTI Student Research Symposium}} 2025},
+  langid = {english},
+  file = {C:\Users\duc\Zotero\storage\G76CBE4P\Zhang - 2025 - Human-Aligned Chess With a Bit of Search.pdf}
 }

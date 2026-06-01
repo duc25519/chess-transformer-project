@@ -27,7 +27,7 @@
     citecolor=blue,
 }
 
-\usepackage[backend=biber, natbib=true, style=numeric, sorting=none]{biblatex}
+\usepackage[backend=biber, natbib=true, style=apa, sorting=nyt]{biblatex}
 \addbibresource{main.bib}
 
 \usepackage{setspace}
@@ -64,23 +64,31 @@
 
 Computer chess has a very long history, dating back to the earliest days of computer science \citep{silver-2017}. It is also ideal for developing artificial intelligence \citep{tang-2024, toshniwal-2022}. Programs, called \textit{chess engines} such as Stockfish have achieved superhuman performance, utilizing various techniques such as Monte-Carlo Tree Search, and customized neural networks \citep{thestockfishdevelopers-2026}.
 
-The Transformer architecture \citep{vaswani-2017} is a very influential architecture, used for the majority of language models. It has seen use in natural language processing, vision, and even analysis of chess itself \citep{ruoss-2024,monroe-2024}. As general large language models like GPT-2
+The Transformer architecture \citep{vaswani-2017} is a very influential architecture, used for the majority of language models. It has seen use in natural language processing, vision, and even analysis of chess itself \citep{ruoss-2024,monroe-2024}. \citet{radford-2019} showed that language models, if trained on a "sufficiently large and diverse dataset", can perform well across many domains and natural-language tasks (such as translation, text ).
 
 In this paper, we build and analyze Transformer-based generative (decoder-only) models at the ability to synthetically generate chess games.
 
-The source code and \LaTeX{} source of this paper are open-source.\footnote{Both the code and \LaTeX{} source for this paper are hosted at \url{https://github.com/duc25519/chess-transformer-project/}
-}
-\section{Related Works}
+The source code and \LaTeX{} source of this paper are open-source at \url{https://github.com/duc25519/chess-transformer-project/}. The dataset used in training and testing is the UCI-processed version of the Lichess open databases by \citet{davis-2024}.
 
-A concern with Large Language Models (\textit{LLMs}) is the representation of their "world state", due to the complexity of natural language and black-box nature of those models \citep{toshniwal-2022}.
+
+\section{Motivation and Related Works}
+
+\subsection{Motivation}
+
+Computer chess has a long history, dating as far back to the 1950s, with works such as \citet{shannon-1950}. It tackles chess as a \textit{search problem}, that is, given a \textit{position} (defined by \citet{shannon-1950} to include piece positions, current side to move, whether the kings and rooks have moved, the last move, and number of moves made since last pawn move or capture. In practice, all of these information is easily computed given game history), find the optimal move for the current player's turn, or declare if the game is over (no more moves can be made.). Instead, this paper frames the problem as a \textit{language modeling} problem (see \cref{sec:definitions} for a formal definition), and while we still evaluate the generated games for chess performance (see \cref{sec:results}), we will focus on this view more.
+
+\subsection{Related Works}
+
+A concern with Large Language Models (\textit{LLMs}) is the representation of their "world state", due to the complexity of natural language and black-box nature of those models \citep{toshniwal-2022}. 
+
 
 \section{Methodology}
 
-\subsection{Definitions}
+\subsection{Definitions} \label{sec:definitions}
 
 \subsubsection{Chess Game and Categories}
 
-A \textit{chess game} is a finite sequence of \textit{half-moves} \(h_1, h_2, \dots, h_n\) (also called \textit{plies}) from the standard initial position of chess. Each half-move is represented using Universal Chess Interface (\textit{UCI}) notation, in which each move is defined by picking up a piece in a \textit{starting square}, and placing it in the \textit{destination square}. \footnote{Even though Standard Algebraic Notation (\textit{SAN}) is more frequently used, UCI notation only requires a significantly smaller token vocabulary, since each half-move does not need to carry extra information that SAN explicitly represents, e.g. the piece being moved, or any extra effects caused by the move, such as checks.}
+A \textit{chess game} is a finite sequence of \textit{half-moves} \(h_1, h_2, \dots, h_n\) (also called \textit{plies}) from the standard initial position of chess. Each half-move is represented using Universal Chess Interface (\textit{UCI}) notation, in which each move is defined by picking up a piece in a \textit{starting square}, and placing it in the \textit{destination square}. 
 
 In this paper, we define a \textit{valid} chess game to be a chess game with no invalid moves, and equivalently, an \textit{invalid} chess game to be a chess game with at least one invalid move.
 
@@ -151,9 +159,25 @@ For this particular task, we use the Lichess open databases, which consists enti
 The model is based on the Transformer architecture, itself based on the attention mechanism \citep{vaswani-2017}. In particular, we will use OpenAI's GPT-2 model \citep{radford-2019}, and it's implementation in HuggingFace's Transformer Library.
 
 We train the model on a setup of two T4 GPUs, available on Kaggle, with a learning rate of \(\trainingLearningRate\) for \(\trainingNumEpochs\) epochs \footnote{More training hyperparamters is available in the source code.}.
-\section{Results}
+\section{Results} \label{sec:results}
 
 \subsection{Evaluation of generated games}
+
+\subsubsection{Average Centipawn Loss}
+
+Let \(P\) be a position, and \(f: P \mapsto \mathbb{R}\) to be an \textit{evaluation function}. The higher \(f(P)\) is, the more likely White is to win, and vice versa. Let \(H_P\) be the set of legal half-moves in \(P\). For any legal half-move \(h \in H_P\), let \(P \mid h\) be the position achieved by performing the move \(h\) in \(P\).
+
+Let \(h^* \in H_P\) to be the best possible half-move. Then the \textit{centipawn loss} is defined to be the following:
+
+\[
+\text{CPL}(P, h) = 
+\begin{cases}
+100 \cdot \max(0, f(P \mid h^*) - f(P \mid h)) &\text{if the half-move is done by White} \\
+100 \cdot \max(0, f(P \mid h) - f(P \mid h^*)) &\text{if the half-move is done by Black}
+\end{cases}
+\]
+
+The Average Centipawn Loss (\textit{ACPL}) is defined as the average CPL of all half-moves a player made throughout the span of one game.
 
 \section{Discussion}
 
@@ -170,6 +194,7 @@ One central limitation of this work lies in the dataset. The wide variety of pla
 I would like to acknowledge Austin Davis for preprocessing and creating the UCI-notation version of the Lichess monthly databases \citep{davis-2024}.
 
 \appendix
+
 
 % \pagebreak
 \printbibliography

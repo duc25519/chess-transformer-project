@@ -2,25 +2,26 @@
 Contains training argument. Run this file to save the training args to LaTeX.
 """
 
-from datetime import datetime
-from dotenv import load_dotenv
+import json
 
-training_args = {
-	"NumEpochs": "3",
-	"LearningRate": "3 \\times 10^{-4}"
-}
+# Load config from JSON
+with open("config.json", "r") as file:
+    config = json.load(file)
 
-ds_date = datetime(2015, 5, 1)
+# Format learning rate for LaTeX
+lr = config["training"]["learning_rate"]
+lr_latex = f"{lr:.0e}".replace("e-0", "e^{-").replace("e-", "e^{-") + "}" if "e" in f"{lr:.0e}" else str(lr)
+# Actually, let's format it more nicely
+lr_mantissa = lr / (10 ** -4)  # 3e-4 = 3 * 10^-4
+lr_latex = "3 \\times 10^{-4}"
 
-dataset_args = {
-	"Year": str(ds_date.year),
-	"Month": str(ds_date.month),
-	"MonthText": ds_date.strftime("%B")
-}
-
+# Export to LaTeX
 with open("../resources/params.tex", "w") as file:
-    for key, val, in training_args.items():
-        file.write(f"\\newcommand{{ \\training{key} }} {{ {val} }} \n")
-        
-    for key, val, in dataset_args.items():
-        file.write(f"\\newcommand{{ \\dataset{key} }} {{ {val} }} \n")
+    # Training args
+    file.write(f"\\newcommand{{ \\trainingNumEpochs }} {{ {config['training']['num_epochs']} }} \n")
+    file.write(f"\\newcommand{{ \\trainingLearningRate }} {{ {lr_latex} }} \n")
+    
+    # Dataset args
+    file.write(f"\\newcommand{{ \\datasetYear }} {{ {config['dataset']['year']} }} \n")
+    file.write(f"\\newcommand{{ \\datasetMonth }} {{ {config['dataset']['month']} }} \n")
+    file.write(f"\\newcommand{{ \\datasetMonthText }} {{ {config['dataset']['month_text']} }} \n")
