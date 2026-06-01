@@ -27,7 +27,7 @@
     citecolor=blue,
 }
 
-\usepackage[backend=biber, natbib=true, style=apa, sorting=nyt]{biblatex}
+\usepackage[backend=biber, natbib=true, style=numeric, sorting=nyt]{biblatex}
 \addbibresource{main.bib}
 
 \usepackage{setspace}
@@ -41,6 +41,8 @@
 
 \usepackage{amsmath}
 \usepackage{amssymb}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min} % thin space, limits underneath in displays
 
 % in case I need to draw stuff
 \usepackage{xskak}
@@ -62,7 +64,7 @@
 
 \section{Introduction}
 
-Computer chess has a very long history, dating back to the earliest days of computer science \citep{silver-2017}. It is also ideal for developing artificial intelligence \citep{tang-2024, toshniwal-2022}. Programs, called \textit{chess engines} such as Stockfish have achieved superhuman performance, utilizing various techniques such as Monte-Carlo Tree Search, and customized neural networks \citep{thestockfishdevelopers-2026}.
+Computer chess has a very long history, dating back to the earliest days of computer science \citep{silver-2017}, with works such as \citet{shannon-1950}. It is also ideal for developing artificial intelligence \citep{tang-2024, toshniwal-2022}. Programs, called \textit{chess engines} such as Stockfish \citep{thestockfishdevelopers-2026} have achieved superhuman performance, utilizing various techniques such as Monte-Carlo Tree Search, and customized neural networks
 
 The Transformer architecture \citep{vaswani-2017} is a very influential architecture, used for the majority of language models. It has seen use in natural language processing, vision, and even analysis of chess itself \citep{ruoss-2024,monroe-2024}. \citet{radford-2019} showed that language models, if trained on a "sufficiently large and diverse dataset", can perform well across many domains and natural-language tasks (such as translation, text ).
 
@@ -71,11 +73,11 @@ In this paper, we build and analyze Transformer-based generative (decoder-only) 
 The source code and \LaTeX{} source of this paper are open-source at \url{https://github.com/duc25519/chess-transformer-project/}. The dataset used in training and testing is the UCI-processed version of the Lichess open databases by \citet{davis-2024}.
 
 
-\section{Motivation and Related Works}
+\section{Related Works}
 
-\subsection{Motivation}
+Former computational approaches to chess have mainly focused on pure chess strength, resulting in super-human chess engines such as Stockfish \citep{thestockfishdevelopers-2026}.
 
-Computer chess has a long history, dating as far back to the 1950s, with works such as \citet{shannon-1950}. It tackles chess as a \textit{search problem}, that is, given a \textit{position} (defined by \citet{shannon-1950} to include piece positions, current side to move, whether the kings and rooks have moved, the last move, and number of moves made since last pawn move or capture. In practice, all of these information is easily computed given game history), find the optimal move for the current player's turn, or declare if the game is over (no more moves can be made.). Instead, this paper frames the problem as a \textit{language modeling} problem (see \cref{sec:definitions} for a formal definition), and while we still evaluate the generated games for chess performance (see \cref{sec:results}), we will focus on this view more.
+It tackles chess as a \textit{search problem}, that is, given a \textit{position} (defined by \citet{shannon-1950} to include piece positions, current side to move, whether the kings and rooks have moved, the last move, and number of moves made since last pawn move or capture. In practice, all of these information is easily computed given game history), find the optimal move for the current player's turn, or declare if the game is over (no more moves can be made.). Instead, this paper frames the problem as a \textit{language modeling} problem (see \cref{sec:definitions} for a formal definition), and while we still evaluate the generated games for chess performance (see \cref{sec:results}), we will focus on this view more.
 
 \subsection{Related Works}
 
@@ -110,19 +112,42 @@ An example visualization of every half-move of a game in UCI notation is depicte
     \label{fig:uci-demo}
 \end{figure}
 
+\subsubsection{Average Centipawn Loss} \label{subsubsec:average-centipawn-loss}
+
+Let \(P\) be a position, and \(f: P \mapsto \mathbb{R}\) to be an \textit{evaluation function}. The higher \(f(P)\) is, the more likely White is to win, and vice versa. Let \(H_P\) be the set of legal half-moves in \(P\). For any legal half-move \(h \in H_P\), let \(P \mid h\) be the position achieved by performing the move \(h\) in \(P\).
+
+Let \(h^* \in H_P\) to be the best possible half-move. Formally:
+
+\[
+h^* = 
+\begin{cases}
+\argmax_{h^* \in H_P} f(P \mid h^*) &\text{if it's White's turn to make the half-move} \\
+\argmin_{h^* \in H_P} f(P \mid h^*) &\text{if it's Black's turn to make the half-move}
+\end{cases}
+\]
+
+Then the \textit{centipawn loss} is defined to be the following:
+
+\[
+\text{CPL}(P, h) = 
+\begin{cases}
+100 \cdot \max(0, f(P \mid h^*) - f(P \mid h)) &\text{if the half-move is done by White} \\
+100 \cdot \max(0, f(P \mid h) - f(P \mid h^*)) &\text{if the half-move is done by Black}
+\end{cases}
+\]
+
+The Average Centipawn Loss (\textit{ACPL}) is defined as the average CPL of all half-moves a player made throughout the span of one game.
+
 \subsubsection{Legal Mask} \label{sec:legal-mask}
 
-Language models are \textit{stochastic}: they sample each token from a learned probability distribution, and may produce tokens that correspond to illegal moves. Furthermore, despite the large amount of moves in the vocabulary, the amount of legal moves in a position on average is only approximately \(30\) \citep{shannon-1950}. To address this, we introduce a \textit{legal mask}, which restricts sampling at each step to the set of moves that are legal given the current board state.
+Language models are stochastic: they sample each token from a learned probability distribution, and may produce moves that are illegal in the current position. Since the number of legal half-moves in a position is usually much smaller than the size of the move vocabulary, we apply a \textit{legal mask} during generation. This mask restricts sampling to the set of legal half-moves in the current position.
 
-% god I'm so bad at making things sound intuitive
-% fuck it
-
-Formally, let \(\mathcal{V}\) denote the move vocabulary and let \(\mathcal{L}(h_1, \dots, h_n) \subseteq \mathcal{V}\) denote the set of  legal moves given the board state induced by the sequence \(h_1, \dots, h_n\). The model produces logits  \(\mathbf{z} \in \mathbb{R}^{|\mathcal{V}|}\); the legal mask sets the logits of illegal moves to \(-\infty\) before sampling:
+Recall from \cref{subsubsec:average-centipawn-loss} that, for any position \(P\), we write \(H_P\) for the set of legal half-moves in \(P\). For a generated sequence \(h_1, \dots, h_n\), let \(P_n\) denote the position reached after applying these half-moves starting from the initial position. Then the model produces logits \(\mathbf{z} \in \mathbb{R}^{|\mathcal{V}|}\), where \(\mathcal{V}\) is the move vocabulary. The legal mask sets the logits of illegal moves to \(-\infty\) before sampling:
 
 \begin{equation}
     \tilde{z}_v =
     \begin{cases}
-        z_v & \text{if } v \in \mathcal{L}(h_1, \dots, h_n) \\
+        z_v & \text{if } v \in H_{P_n} \\
         -\infty & \text{otherwise}
     \end{cases}
 \end{equation}
@@ -132,13 +157,10 @@ The next move is then sampled from the renormalized distribution:
 \begin{equation}
     P(h_{n+1} = v \mid h_1, \dots, h_n)
     = \text{softmax}(\tilde{\mathbf{z}})_v
-    = \frac{\exp(z_v)}{\displaystyle\sum_{u \,\in\,
-    \mathcal{L}(h_1, \dots, h_n)} \exp(z_u)}
+    = \frac{\exp(z_v)}{\displaystyle\sum_{u \in H_{P_n}} \exp(z_u)}
 \end{equation}
 
-Since \(\exp(-\infty) = 0\), illegal moves contribute nothing to the denominator, and the distribution renormalizes automatically over legal moves only.
-
-The legal mask will only guarantee generation of a next valid half-move \(h_{n + 1}\) given existing half-moves \(h_1, h_2, \dots, h_n\). It does not guarantee game completion, lower centipawn-loss, etc.
+Since \(\exp(-\infty) = 0\), illegal moves contribute nothing to the denominator, and the distribution renormalizes automatically over legal moves only. The legal mask guarantees only that the next sampled half-move is legal; it does not guarantee game completion or low centipawn loss.
 
 \subsection{Task}
 
@@ -163,27 +185,17 @@ We train the model on a setup of two T4 GPUs, available on Kaggle, with a learni
 
 \subsection{Evaluation of generated games}
 
-\subsubsection{Average Centipawn Loss}
+\subsubsection{Approximate ELO rating}
 
-Let \(P\) be a position, and \(f: P \mapsto \mathbb{R}\) to be an \textit{evaluation function}. The higher \(f(P)\) is, the more likely White is to win, and vice versa. Let \(H_P\) be the set of legal half-moves in \(P\). For any legal half-move \(h \in H_P\), let \(P \mid h\) be the position achieved by performing the move \(h\) in \(P\).
-
-Let \(h^* \in H_P\) to be the best possible half-move. Then the \textit{centipawn loss} is defined to be the following:
-
-\[
-\text{CPL}(P, h) = 
-\begin{cases}
-100 \cdot \max(0, f(P \mid h^*) - f(P \mid h)) &\text{if the half-move is done by White} \\
-100 \cdot \max(0, f(P \mid h) - f(P \mid h^*)) &\text{if the half-move is done by Black}
-\end{cases}
-\]
-
-The Average Centipawn Loss (\textit{ACPL}) is defined as the average CPL of all half-moves a player made throughout the span of one game.
+The ELO rating system \citep{elo-1967} is the rating system used by FIDE to rank human chess players. In order to measure the performance of the model, we use the Maia-3 family of chess engines \citep{monroe-2025}, which can simulate the play-style of a human player in various ELO rating levels. The set of games will then be evaluated by the BayesElo \citep{coulom-2010} program to output an approximate performance of the model.
 
 \section{Discussion}
 
 \subsection{Limitations}
 
 One central limitation of this work lies in the dataset. The wide variety of player ELO ratings mean that the model are likely to perform worse (in terms of accuracy of the generated games, if they are valid) compared to if it is only trained on higher-rated games. Similarly, results by \citep{toshniwal-2022} show that training on smaller game datasets causes the models' predictive capability to suffer.
+
+Another issue in evaluation is that the Maia models can only simulate human play of its set ELO level with limited accuracy
 
 \subsection{Future Work}
 
@@ -194,7 +206,7 @@ One central limitation of this work lies in the dataset. The wide variety of pla
 I would like to acknowledge Austin Davis for preprocessing and creating the UCI-notation version of the Lichess monthly databases \citep{davis-2024}.
 
 \appendix
-
+\section{BayesElo}
 
 % \pagebreak
 \printbibliography

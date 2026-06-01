@@ -7,6 +7,15 @@
   langid = {english}
 }
 
+@software{coulom-2010,
+  title = {Bayesian {{Elo Rating}}},
+  author = {Coulom, Remi},
+  date = {2010},
+  url = {https://www.remi-coulom.fr/Bayesian-Elo/},
+  urldate = {2026-06-01},
+  file = {C:\Users\duc\Zotero\storage\D5HQZLLJ\Bayesian-Elo.html}
+}
+
 @dataset{davis-2024,
   title = {Lichess.Org Open Database in {{UCI}} Format},
   author = {Davis, Austin},
@@ -15,6 +24,18 @@
   location = {HuggingFace},
   url = {https://huggingface.co/datasets/austindavis/lichess-uci},
   langid = {english}
+}
+
+@article{elo-1967,
+  entrysubtype = {magazine},
+  title = {The {{Proposed USCF Rating System}}: {{Its Development}}, {{Theory}}, and {{Applications}}},
+  author = {Elo, Arpad E.},
+  date = {1967-08},
+  journaltitle = {Chess Life},
+  volume = {22},
+  pages = {242--247},
+  publisher = {United States Chess Federation},
+  url = {https://uscf1-nyc1.aodhosting.com/CL-AND-CR-ALL/CL-ALL/1967/1967_08.pdf#page=26}
 }
 
 @inproceedings{feng-2023a,
@@ -48,6 +69,18 @@
   file = {C:\Users\duc\Zotero\storage\BY86R4IX\Glickman - 2022 - Example of the Glicko-2 system.pdf}
 }
 
+@inproceedings{karvonen-2024,
+  title = {Emergent {{World Models}} and {{Latent Variable Estimation}} in {{Chess-Playing Language Models}}},
+  author = {Karvonen, Adam},
+  date = {2024-08-26},
+  url = {https://openreview.net/forum?id=PPTrmvEnpW},
+  urldate = {2026-06-01},
+  abstract = {Language models have shown unprecedented capabilities, sparking debate over the source of their performance. Is it merely the outcome of learning syntactic patterns and surface level statistics, or do they extract semantics and a world model from the text? Prior work by Li et al. investigated this by training a GPT model on synthetic, randomly generated Othello games and found that the model learned an internal representation of the board state. We extend this work into the more complex domain of chess, training on real games and investigating our model's internal representations using linear probes and contrastive activations. The model is given no a priori knowledge of the game and is solely trained on next character prediction, yet we find evidence of internal representations of board state. We validate these internal representations by using them to make interventions on the model's activations and edit its internal board state. Unlike Li et al's prior synthetic dataset approach, our analysis finds that the model also learns to estimate latent variables like player skill to better predict the next character. We derive a player skill vector and add it to the model, improving the model's win rate by up to 2.6 times.},
+  eventtitle = {First {{Conference}} on {{Language Modeling}}},
+  langid = {english},
+  file = {C:\Users\duc\Zotero\storage\7LMDEKQA\Karvonen - 2024 - Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models.pdf}
+}
+
 @inproceedings{li-2022,
   title = {Emergent {{World Representations}}: {{Exploring}} a {{Sequence Model Trained}} on a {{Synthetic Task}}},
   shorttitle = {Emergent {{World Representations}}},
@@ -68,6 +101,24 @@
   abstract = {Restart techniques are common in gradient-free optimization to deal with multimodal functions. Partial warm restarts are also gaining popularity in gradient-based optimization to improve the rate of convergence in accelerated gradient schemes to deal with ill-conditioned functions. In this paper, we propose a simple warm restart technique for stochastic gradient descent to improve its anytime performance when training deep neural networks. We empirically study its performance on the CIFAR-10 and CIFAR-100 datasets, where we demonstrate new state-of-the-art results at 3.14\textbackslash\% and 16.21\textbackslash\%, respectively. We also demonstrate its advantages on a dataset of EEG recordings and on a downsampled version of the ImageNet dataset. Our source code is available at \textbackslash\textbackslash{} \textbackslash url\{https://github.com/loshchil/SGDR\}},
   eventtitle = {International {{Conference}} on {{Learning Representations}}},
   langid = {english}
+}
+
+@article{mcgrath-2022,
+  title = {Acquisition of Chess Knowledge in {{AlphaZero}}},
+  author = {McGrath, Thomas and Kapishnikov, Andrei and Tomašev, Nenad and Pearce, Adam and Wattenberg, Martin and Hassabis, Demis and Kim, Been and Paquet, Ulrich and Kramnik, Vladimir},
+  date = {2022-11-22},
+  journaltitle = {Proceedings of the National Academy of Sciences},
+  shortjournal = {Proc. Natl. Acad. Sci. U.S.A.},
+  volume = {119},
+  number = {47},
+  pages = {e2206625119},
+  issn = {0027-8424, 1091-6490},
+  doi = {10.1073/pnas.2206625119},
+  url = {https://pnas.org/doi/10.1073/pnas.2206625119},
+  urldate = {2026-06-01},
+  abstract = {We analyze the knowledge acquired by AlphaZero, a neural network engine that learns chess solely by playing against itself yet becomes capable of outperforming human chess players. Although the system trains without access to human games or guidance, it appears to learn concepts analogous to those used by human chess players. We provide two lines of evidence. Linear probes applied to AlphaZero’s internal state enable us to quantify when and where such concepts are represented in the network. We also describe a behavioral analysis of opening play, including qualitative commentary by a former world chess champion.},
+  langid = {english},
+  file = {C:\Users\duc\Zotero\storage\NNPJ3WGS\McGrath et al. - 2022 - Acquisition of chess knowledge in AlphaZero.pdf}
 }
 
 @online{monroe-2024,
@@ -95,20 +146,6 @@
   eventtitle = {The {{Fourteenth International Conference}} on {{Learning Representations}}},
   langid = {english},
   file = {C:\Users\duc\Zotero\storage\YD5AC7HX\Monroe et al. - 2025 - Chessformer A Unified Architecture for Chess Modeling.pdf}
-}
-
-@online{naveed-2024,
-  title = {A {{Comprehensive Overview}} of {{Large Language Models}}},
-  author = {Naveed, Humza and Khan, Asad Ullah and Qiu, Shi and Saqib, Muhammad and Anwar, Saeed and Usman, Muhammad and Akhtar, Naveed and Barnes, Nick and Mian, Ajmal},
-  date = {2024-10-17},
-  eprint = {2307.06435},
-  eprinttype = {arXiv},
-  eprintclass = {cs.CL},
-  doi = {10.48550/arXiv.2307.06435},
-  url = {http://arxiv.org/abs/2307.06435},
-  abstract = {Large Language Models (LLMs) have recently demonstrated remarkable capabilities in natural language processing tasks and beyond. This success of LLMs has led to a large influx of research contributions in this direction. These works encompass diverse topics such as architectural innovations, better training strategies, context length improvements, fine-tuning, multi-modal LLMs, robotics, datasets, benchmarking, efficiency, and more. With the rapid development of techniques and regular breakthroughs in LLM research, it has become considerably challenging to perceive the bigger picture of the advances in this direction. Considering the rapidly emerging plethora of literature on LLMs, it is imperative that the research community is able to benefit from a concise yet comprehensive overview of the recent developments in this field. This article provides an overview of the existing literature on a broad range of LLM-related concepts. Our self-contained comprehensive overview of LLMs discusses relevant background concepts along with covering the advanced topics at the frontier of research in LLMs. This review article is intended to not only provide a systematic survey but also a quick comprehensive reference for the researchers and practitioners to draw insights from extensive informative summaries of the existing works to advance the LLM research.},
-  pubstate = {prepublished},
-  keywords = {Computer Science - Computation and Language}
 }
 
 @online{openai-2024,
