@@ -172,7 +172,7 @@ The games will be generated with and without the use of the legal mask. For each
 
 \subsection{Data}
 
-For this particular task, we use the Lichess open databases, which consists entirely of games by human and engine players of various ELO ratings. The database of games is split into individual months of various years, and has been processed into the UCI format by \citet{davis-2024}. \footnote{The original versions of the files are in SAN notation, and can be found at \url{https://database.lichess.org}}
+For this particular task, we use the Lichess open databases, which consists entirely of games by human and engine players of various Eloratings. The database of games is split into individual months of various years, and has been processed into the UCI format by \citet{davis-2024}. \footnote{The original versions of the files are in SAN notation, and can be found at \url{https://database.lichess.org}}
 
 \subsection{Model}
 
@@ -185,17 +185,20 @@ We train the model on a setup of two T4 GPUs, available on Kaggle, with a learni
 
 \subsection{Evaluation of generated games}
 
-\subsubsection{Approximate ELO rating}
+\subsubsection{Approximate Elo rating}
 
-The ELO rating system \citep{elo-1967} is the rating system used by FIDE to rank human chess players. In order to measure the performance of the model, we use the Maia-3 family of chess engines \citep{monroe-2025}, which can simulate the play-style of a human player in various ELO rating levels. The set of games will then be evaluated by the BayesElo \citep{coulom-2010} program to output an approximate performance of the model.
+The Elo rating system \citep{elo-1967} is the rating system used by FIDE to rank human chess players. In order to measure the performance of the model, we use the Maia-3 family of chess engines \citep{monroe-2025}, which can simulate the play-style of a human player in various Elo rating levels. The set of games will then be evaluated by the BayesElo \citep{coulom-2010} program to output an approximate performance of the model.
+
+
+The rating calculation algorithm used by BayesElo is explained at \cref{app:bayeselo-algorithm}
 
 \section{Discussion}
 
 \subsection{Limitations}
 
-One central limitation of this work lies in the dataset. The wide variety of player ELO ratings mean that the model are likely to perform worse (in terms of accuracy of the generated games, if they are valid) compared to if it is only trained on higher-rated games. Similarly, results by \citep{toshniwal-2022} show that training on smaller game datasets causes the models' predictive capability to suffer.
+One central limitation of this work lies in the dataset. The wide variety of player Elo ratings mean that the model are likely to perform worse (in terms of accuracy of the generated games, if they are valid) compared to if it is only trained on higher-rated games. Similarly, results by \citep{toshniwal-2022} show that training on smaller game datasets causes the models' predictive capability to suffer.
 
-Another issue in evaluation is that the Maia models can only simulate human play of its set ELO level with limited accuracy
+Another issue in evaluation is that the Maia models can only simulate human play of its set Elo level with limited accuracy (results in \citet{monroe-2025} show that move-matching accuracies of the \(79M\)-parameter and \(23M\)-parameter has achieved move-matching accuracy of only \(57.1\%\) and \(56.6\%\), respectively).
 
 \subsection{Future Work}
 
@@ -206,7 +209,17 @@ Another issue in evaluation is that the Maia models can only simulate human play
 I would like to acknowledge Austin Davis for preprocessing and creating the UCI-notation version of the Lichess monthly databases \citep{davis-2024}.
 
 \appendix
-\section{BayesElo}
+\section{The Elo system and BayesElo} 
+
+\subsection{The Elo System} \label{subsec:the-elo-system}
+The Elo system assumes that the strength of a player can be described by a single numeric value, called their \textit{Elo rating}, and players with higher Elo ratings is expected to defeat players with lower Elo ratings. Formally, if two players have ratings \(R_1, R_2\); then their expected scores \(E_1, E_2\) in a match between them is:
+
+\begin{equation}
+\begin{aligned}
+E_1 &= \frac{1}{1 + 10^{(R_2 - R_1)/400}} \\
+E_2 &= \frac{1}{1 + 10^{(R_1 - R_2)/400}}
+\end{aligned}
+\end{equation}
 
 % \pagebreak
 \printbibliography
