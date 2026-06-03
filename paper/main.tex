@@ -27,7 +27,7 @@
     citecolor=blue,
 }
 
-\usepackage[backend=biber, natbib=true, style=numeric, sorting=nyt]{biblatex}
+\usepackage[backend=biber, natbib=true, style=numeric, sorting=none]{biblatex}
 \addbibresource{main.bib}
 
 \usepackage{setspace}
@@ -75,9 +75,9 @@ The source code and \LaTeX{} source of this paper are open-source at \url{https:
 
 \section{Related Works}
 
-Former computational approaches to chess have mainly focused on pure chess strength, resulting in super-human chess engines such as Stockfish \citep{thestockfishdevelopers-2026}.
+A large part of research in historical computer chess has been focusing on pure chess strength. One prominent example is the Deep Blue computer, which is the first computer to defeat a world chess champion in a match \citep{campbell-2002}. resulting in super-human chess engines such as Stockfish \citep{thestockfishdevelopers-2026}.
 
-It tackles chess as a \textit{search problem}, that is, given a \textit{position} (defined by \citet{shannon-1950} to include piece positions, current side to move, whether the kings and rooks have moved, the last move, and number of moves made since last pawn move or capture. In practice, all of these information is easily computed given game history), find the optimal move for the current player's turn, or declare if the game is over (no more moves can be made.). Instead, this paper frames the problem as a \textit{language modeling} problem (see \cref{sec:definitions} for a formal definition), and while we still evaluate the generated games for chess performance (see \cref{sec:results}), we will focus on this view more.
+It tackles chess as a \textit{search problem}, that is, given a \textit{position} (defined by \citet{shannon-1950} to include piece positions, current side to move, whether the kings and rooks have moved, the last move, and number of moves made since last pawn move or capture. In practice, all of these information is easily computed given game history), find the optimal move for the current player's turn, or declare if the game is over (no more moves can be made.). Instead, this paper frames the problem as a \textit{language modeling} problem (see \cref{sec:definitions} for a formal definition), and instead of probing for an evaluation of the model's understanding of chess, we generate chess games and test them on a gameplay basis. 
 
 \subsection{Related Works}
 
@@ -140,7 +140,7 @@ The Average Centipawn Loss (\textit{ACPL}) is defined as the average CPL of all 
 
 \subsubsection{Legal Mask} \label{sec:legal-mask}
 
-Language models are stochastic: they sample each token from a learned probability distribution, and may produce moves that are illegal in the current position. Since the number of legal half-moves in a position is usually much smaller than the size of the move vocabulary, we apply a \textit{legal mask} during generation. This mask restricts sampling to the set of legal half-moves in the current position.
+Language models are \textit{stochastic}: they sample each token from a learned probability distribution, and may produce moves that are illegal in the current position. Since the number of legal half-moves in a position is usually much smaller than the size of the move vocabulary, we apply a \textit{legal mask} during generation. This mask restricts sampling to the set of legal half-moves in the current position.
 
 Recall from \cref{subsubsec:average-centipawn-loss} that, for any position \(P\), we write \(H_P\) for the set of legal half-moves in \(P\). For a generated sequence \(h_1, \dots, h_n\), let \(P_n\) denote the position reached after applying these half-moves starting from the initial position. Then the model produces logits \(\mathbf{z} \in \mathbb{R}^{|\mathcal{V}|}\), where \(\mathcal{V}\) is the move vocabulary. The legal mask sets the logits of illegal moves to \(-\infty\) before sampling:
 
@@ -208,11 +208,14 @@ Another issue in evaluation is that the Maia models can only simulate human play
 
 I would like to acknowledge Austin Davis for preprocessing and creating the UCI-notation version of the Lichess monthly databases \citep{davis-2024}.
 
+\printbibliography
+
+\pagebreak
 \appendix
 \section{The Elo system and BayesElo} 
 
 \subsection{The Elo System} \label{subsec:the-elo-system}
-The Elo system assumes that the strength of a player can be described by a single numeric value, called their \textit{Elo rating}, and players with higher Elo ratings is expected to defeat players with lower Elo ratings. Formally, if two players have ratings \(R_1, R_2\); then their expected scores \(E_1, E_2\) in a match between them is:
+The Elo rating system \citep{elo-1986} assumes that the strength of a player can be described by a single numeric value, called their \textit{Elo rating}, and players with higher Elo ratings is expected to defeat players with lower Elo ratings. Formally, if two players have ratings \(R_1, R_2\); then their expected scores \(E_1, E_2\) in a match between them is:
 
 \begin{equation}
 \begin{aligned}
@@ -221,6 +224,19 @@ E_2 &= \frac{1}{1 + 10^{(R_1 - R_2)/400}}
 \end{aligned}
 \end{equation}
 
+Let \(Q_1 = 10^{R_1 / 400}, Q_2 = 10^{R_2 / 100}\). Then we have:
+% Option 3: Use \[ \] with aligned (if you want unnumbered display math)
+\[
+\begin{aligned}
+E_1 &= \frac{Q_1}{Q_1 + Q_2} \\ 
+E_2 &= \frac{Q_2}{Q_1 + Q_2} 
+\end{aligned}
+\]
+
+which implies \(E_1 + E_2 = 1\). 
+
+However, during a chess game, the player with white gets a \textit{first-move advantage}. Even though the advantage is not large enough to win with perfect play, 
+
 % \pagebreak
-\printbibliography
+% \printbibliography
 \end{document}
